@@ -6,7 +6,7 @@ The requirements to use this code is outlined primarily [here](https://code.visu
 
 ## Dockerfile 
 
-Python base images is obtained from [here](https://hub.docker.com/_/python/tags). You can go to `.devcontainer` and run `docker build --pull --rm -f ".devcontainer/Dockerfile" -t pythoncustomvscodedevcontainer:latest ".devcontainer" `. 
+Python base images is obtained from [here](https://hub.docker.com/_/python/tags).  It is recommended to use `ctrl + shift+ p` and use the command palette to either reopen in container with or without cache. 
 
 ## Acknowlegements 
 
