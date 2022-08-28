@@ -3,8 +3,8 @@ version: "3"
 services:
   app:
     build:
-      context: .
       dockerfile: Dockerfile
+      context: "." 
       args:
         # These set the ARG values in your Dockerfile
         VARIANT: "3.8.13-bullseye"

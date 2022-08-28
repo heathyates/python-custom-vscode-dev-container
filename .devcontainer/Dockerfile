@@ -1,37 +1,31 @@
-# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.245.0/containers/python-3/.devcontainer/base.Dockerfile
 # [Choice] Python version (use -bullseye variants on local arm64/Apple Silicon): 3, 3.10, 3.9, 3.8, 3.7, 3.6, 3-bullseye, 3.10-bullseye, 3.9-bullseye, 3.8-bullseye, 3.7-bullseye, 3.6-bullseye, 3-buster, 3.10-buster, 3.9-buster, 3.8-buster, 3.7-buster, 3.6-buster
 ARG VARIANT
-#FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
 FROM python:${VARIANT}
 
+# Copy library scripts to execute
+#COPY .devcontainer/library-scripts/*.sh .devcontainer/library-scripts/*.env /tmp/library-scripts/
+COPY library-scripts/*.sh /tmp/library-scripts/
 
-
-#Arguments
-#ARG USERNAME=
-#ARG USER_UID=2001
-#ARG USER_GID=$USER_UID
+# [Option] Install zsh
+ARG INSTALL_ZSH="true"
+# [Option] Upgrade OS packages to their latest versions
+ARG UPGRADE_PACKAGES="true"
+# Install needed packages and setup non-root user. Use a separate RUN statement to add your own dependencies.
 ARG USERNAME
-ARG USER_GID
 ARG USER_UID
+ARG USER_GID=$USER_UID
 
-# Create the user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    #
-    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-    && apt-get update \
-    && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+# Create a non-root user name and set up common debain dependencies
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    # Remove imagemagick due to https://security-tracker.debian.org/tracker/CVE-2019-10131
+    && apt-get purge -y imagemagick imagemagick-6-common \
+    # Install common packages, non-root user
+    && bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
+    && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 
-# [Optional] Set the default user. Omit if you want to keep the default as root.
-USER $USERNAME
+#Set up node.js
 
-# [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
-#ARG NODE_VERSION="none"
-#ARG NODE_VERSION
-#RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
 # [Optional] If your pip requirements rarely change, uncomment this section to add them to the image.
 # COPY requirements.txt /tmp/pip-tmp/
@@ -42,5 +36,5 @@ USER $USERNAME
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
 
-# [Optional] Uncomment this line to install global node packages.
-# RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
+# Remove library scripts for final image
+#RUN rm -rf /tmp/library-scripts

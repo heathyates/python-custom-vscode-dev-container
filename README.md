@@ -8,6 +8,10 @@ The requirements to use this code is outlined primarily [here](https://code.visu
 
 Python base images is obtained from [here](https://hub.docker.com/_/python/tags). You can go to `.devcontainer` and run `docker build --pull --rm -f ".devcontainer/Dockerfile" -t pythoncustomvscodedevcontainer:latest ".devcontainer" `. 
 
+## Acknowlegements 
+
+The author studied Microsoft devcontainer documentation and base python devcontainer environments. See [here](https://github.com/microsoft/vscode-dev-containers/tree/v0.245.0/containers/python-3/.devcontainer) for further reading.
+
 # References 
 - [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers#_dev-container-features-preview)
 - [Getting Started with Python 3 Dev Containers](https://medium.com/@dexterwilliams04/getting-started-with-python-3-dev-containers)
